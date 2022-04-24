@@ -2,12 +2,12 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, send_from_directory
+from flask import Flask, request, jsonify, url_for, send_from_directory, json
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -110,7 +110,22 @@ def login():
 def datos():
     get_token = get_jwt_identity()
     return (get_token)
-
+@app.route('/user/signup', methods=['POST','GET'])
+def signup():
+    if request.method == "GET":
+        return("hola")
+    else:
+        decoded_object = json.loads(request.data)
+        #checkuser = User.query.get(decoded_object['email'])
+        #if checkuser:
+        new_user = User()
+        new_user.email = decoded_object['email']
+        new_user.password = decoded_object['password']
+        new_user.is_active = True
+        db.session.add(new_user)
+        db.session.commit()
+        return("todo salio bien")
+    
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
