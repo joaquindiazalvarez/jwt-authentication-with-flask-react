@@ -11,6 +11,9 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+import datetime #modulo de python que ayuda a calcular tiempo
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 
 #from models import Person
 
@@ -42,6 +45,8 @@ setup_commands(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
+jwt = JWTManager(app)
+
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
@@ -63,6 +68,48 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0 # avoid cache memory
     return response
 
+@app.route('/user/login', methods=['POST'])
+def login():
+    #recibo info de la solicitud (fetch)
+    body = request.get_json()
+    #validar si el campo existe o no
+    if "email" not in body:
+        return "debes especificar el email"
+    if "password" not in body:
+        return "debes especificar un password"
+
+    #chequear si el usuario existe
+    user = User.query.filter_by(email=body['email']).first()
+    
+    if user: #si el resultado de user es diferente a None
+        if user.password == body['password']:
+            #"usuario y clave correctos"
+            #defino que el token tendrá un tiempo de vida dependiendo de los minutos indicados
+            expiracion = datetime.timedelta(minutes=2) 
+
+            access_token = create_access_token(
+                identity=user.email, 
+                expires_delta=expiracion)
+            
+            return jsonify({
+                "mensaje": "inicio de sesión fue satisfactorio",
+                "data": user.serialize(),
+                "expira_segundos": expiracion.total_seconds(),
+                "token": access_token
+            })
+
+        else:
+            return "usuario o clave incorrectos"
+
+
+
+    return "el usuario no existe"
+
+@app.route('/guardia', methods=['GET'])
+@jwt_required()
+def datos():
+    get_token = get_jwt_identity()
+    return (get_token)
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
