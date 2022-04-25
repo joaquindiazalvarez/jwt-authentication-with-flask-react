@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, Redirect } from "react-router-dom";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
@@ -109,12 +109,13 @@ export const SignUp = (props) => {
 
                             <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                               <button
-                                type="submit"
+                                type="button"
                                 className="btn btn-primary btn-lg"
-                                onSubmit={() => {
+                                onClick={() => {
                                   if (passwordSent === confirmSent) {
                                     setConfirmWrong(false);
                                     actions.register(emailSent, passwordSent);
+                                    <Redirect to="/login"></Redirect>;
                                   } else {
                                     setConfirmWrong(true);
                                   }

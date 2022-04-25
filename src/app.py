@@ -110,14 +110,12 @@ def login():
 def datos():
     get_token = get_jwt_identity()
     return (get_token)
-@app.route('/user/signup', methods=['POST','GET'])
+@app.route('/user/signup', methods=['POST'])
 def signup():
-    if request.method == "GET":
-        return("hola")
-    else:
-        decoded_object = json.loads(request.data)
-        #checkuser = User.query.get(decoded_object['email'])
-        #if checkuser:
+    decoded_object = json.loads(request.data)
+    checkuser = User.query.filter_by(email=decoded_object['email']).all()
+    #checkuser = User.query.get(decoded_object['email'])
+    if not checkuser:
         new_user = User()
         new_user.email = decoded_object['email']
         new_user.password = decoded_object['password']
@@ -125,6 +123,8 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         return("todo salio bien")
+    else:
+        return("el usuario ya existe")
     
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

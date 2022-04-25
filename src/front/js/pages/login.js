@@ -5,6 +5,8 @@ import { Context } from "../store/appContext";
 
 export const Login = () => {
   const { store, actions } = useContext(Context);
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
 
   return (
     <div>
@@ -21,6 +23,7 @@ export const Login = () => {
                 class="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
+                onChange={(e) => setEmail(e.target.value)}
               ></input>
               <div id="emailHelp" class="form-text">
                 We'll never share your email with anyone else.
@@ -34,9 +37,14 @@ export const Login = () => {
                 type="password"
                 class="form-control"
                 id="exampleInputPassword1"
+                onChange={(e) => setPassword(e.target.value)}
               ></input>
             </div>
-            <button type="submit" class="btn btn-primary">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onClick={() => actions.login(email, password)}
+            >
               Submit
             </button>
           </form>
