@@ -4,7 +4,11 @@ import { Link, useParams, Redirect } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Private = () => {
+  const { store, actions } = useContext(Context);
   const [email, setEmail] = useState("");
+  useEffect(() => {
+    console.log(store.loged);
+  }, [store.loged]);
   useEffect(() => {
     let token = window.sessionStorage.getItem("token");
     var myHeaders = new Headers();
@@ -24,8 +28,15 @@ export const Private = () => {
       .then((result) => {
         console.log(result);
         setEmail(result);
+        console.log(store.loged);
+        actions.loginTrue();
       })
       .catch((error) => console.log("error", error));
   }, []);
-  return <h1>Tu correo es {email}</h1>;
+
+  return (
+    <h1>
+      Tu correo es {email}, store loged = {store.loged}
+    </h1>
+  );
 };

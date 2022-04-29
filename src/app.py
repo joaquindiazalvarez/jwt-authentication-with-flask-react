@@ -85,16 +85,16 @@ def login():
         if user.password == body['password']:
             #"usuario y clave correctos"
             #defino que el token tendrá un tiempo de vida dependiendo de los minutos indicados
-            expiracion = datetime.timedelta(minutes=2) 
+            #expiracion = datetime.timedelta(minutes=2) 
 
             access_token = create_access_token(
-                identity=user.email, 
-                expires_delta=expiracion)
+                identity=user.email) 
+                #expires_delta=expiracion)
             
             return jsonify({
                 "mensaje": "inicio de sesión fue satisfactorio",
                 "data": user.serialize(),
-                "expira_segundos": expiracion.total_seconds(),
+                #"expira_segundos": expiracion.total_seconds(),
                 "token": access_token
             })
 

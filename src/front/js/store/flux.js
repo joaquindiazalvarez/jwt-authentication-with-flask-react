@@ -2,18 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-        },
-      ],
+      loged: false,
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -93,6 +82,22 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.log(window.sessionStorage.setItem(token, result.token))
           )
           .catch((error) => console.log("error", error));
+      },
+      loginShuffle: () => {
+        const store = getStore();
+        if (store.loged === true) {
+          setStore((store.loged = false));
+        } else {
+          store.loged = true;
+        }
+      },
+      loginTrue: () => {
+        const store = getStore();
+        setStore({ login: true });
+      },
+      loginFalse: () => {
+        const store = getStore();
+        setStore({ login: false });
       },
     },
   };

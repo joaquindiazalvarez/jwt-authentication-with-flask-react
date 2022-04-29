@@ -32,6 +32,7 @@ export const Login = () => {
       .then((result) => {
         console.log(result);
         window.sessionStorage.setItem("token", result["token"]);
+        actions.loginTrue();
         history.push("/private");
       })
       .catch((error) => console.log("error", error));
