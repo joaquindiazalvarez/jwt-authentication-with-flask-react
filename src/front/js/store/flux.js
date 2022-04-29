@@ -61,7 +61,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         fetch(
-          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us42.gitpod.io/user/signup",
+          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us43.gitpod.io/user/signup",
           requestOptions
         )
           .then((response) => response.text())
@@ -85,11 +85,13 @@ const getState = ({ getStore, getActions, setStore }) => {
         };
 
         fetch(
-          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us42.gitpod.io/user/login",
+          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us43.gitpod.io/user/login",
           requestOptions
         )
           .then((response) => response.text())
-          .then((result) => console.log(result))
+          .then((result) =>
+            console.log(window.sessionStorage.setItem(token, result.token))
+          )
           .catch((error) => console.log("error", error));
       },
     },

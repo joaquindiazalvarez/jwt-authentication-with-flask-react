@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
@@ -7,6 +7,35 @@ export const Login = () => {
   const { store, actions } = useContext(Context);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const history = useHistory();
+  function login(email, password) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      email: email,
+      password: password,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us43.gitpod.io/user/login",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        window.sessionStorage.setItem("token", result["token"]);
+        history.push("/private");
+      })
+      .catch((error) => console.log("error", error));
+  }
 
   return (
     <div>
@@ -43,7 +72,7 @@ export const Login = () => {
             <button
               type="button"
               class="btn btn-primary"
-              onClick={() => actions.login(email, password)}
+              onClick={() => login(email, password)}
             >
               Submit
             </button>

@@ -105,9 +105,9 @@ def login():
 
     return "el usuario no existe"
 
-@app.route('/guardia', methods=['GET'])
+@app.route('/autenticacion', methods=['GET'])
 @jwt_required()
-def datos():
+def autenticacion():
     get_token = get_jwt_identity()
     return (get_token)
 @app.route('/user/signup', methods=['POST'])
