@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Navbar = () => {
   const { store, actions } = useContext(Context);
-  const [loged, setLoged] = useState(store.loged);
+  const [token, setToken] = useState();
+  const history = useHistory();
   useEffect(() => {
-    setLoged(store.loged);
+    setToken(sessionStorage.getItem("token"));
   }, [store.loged]);
   return (
     <nav className="navbar navbar-light bg-light">
@@ -15,11 +16,33 @@ export const Navbar = () => {
           <span className="navbar-brand mb-0 h1">Home</span>
         </Link>
         <div className="ml-auto">
-          <Link to="/">
-            <button className="btn btn-primary">
-              {loged ? "Logout" : "login"}
+          {token && (
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                actions.logout();
+                history.push("/");
+              }}
+            >
+              Logout
             </button>
-          </Link>
+          )}
+          {!token && (
+            <button
+              className="btn btn-primary"
+              onClick={() => history.push("/login")}
+            >
+              Log in
+            </button>
+          )}
+          {token && (
+            <button
+              className="btn btn-primary"
+              onClick={() => history.push("/private_page")}
+            >
+              Private
+            </button>
+          )}
         </div>
       </div>
     </nav>

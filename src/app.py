@@ -105,20 +105,20 @@ def login():
 
     return "el usuario no existe"
 
-@app.route('/autenticacion', methods=['GET'])
+@app.route('/user/get', methods=['GET'])
 @jwt_required()
-def autenticacion():
+def get_email():
     get_token = get_jwt_identity()
-    return (get_token)
+    return jsonify({"email":get_token})
 @app.route('/user/signup', methods=['POST'])
 def signup():
-    decoded_object = json.loads(request.data)
-    checkuser = User.query.filter_by(email=decoded_object['email']).all()
+    body = request.get_json()
+    checkuser = User.query.filter_by(email=body['email']).all()
     #checkuser = User.query.get(decoded_object['email'])
     if not checkuser:
         new_user = User()
-        new_user.email = decoded_object['email']
-        new_user.password = decoded_object['password']
+        new_user.email = body['email']
+        new_user.password = body['password']
         new_user.is_active = True
         db.session.add(new_user)
         db.session.commit()

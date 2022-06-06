@@ -10,6 +10,8 @@ import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import { ProtectedRoute } from "./pages/protected_route";
+import { PrivatePage } from "./pages/private_page";
 
 //create your first component
 const Layout = () => {
@@ -32,9 +34,12 @@ const Layout = () => {
             <Route exact path="/login">
               <Login />
             </Route>
-            <Route exact path="/private">
-              <Private />
-            </Route>
+            <ProtectedRoute
+              exact
+              path="/private_page"
+              component={PrivatePage}
+            />
+            <Route></Route>
             <Route>
               <h1>Not found!</h1>
             </Route>

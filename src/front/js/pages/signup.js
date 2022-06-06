@@ -1,17 +1,29 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { Link, useParams, Redirect } from "react-router-dom";
+import { Link, useParams, Redirect, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
 export const SignUp = (props) => {
-  const { store, actions } = useContext(Context);
-  const params = useParams();
-  const [emailSent, changeEmail] = useState();
-  const [passwordSent, changePassword] = useState();
-  const [confirmSent, changeConfirm] = useState();
-  const [confirmWrong, setConfirmWrong] = useState(false);
-
+  const { actions } = useContext(Context);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [confirm, setConfirm] = useState();
+  const handleSubmit = (e) => {
+    if (form.password === confirm) {
+      actions.register(form);
+    } else {
+      console.log("las contraseñas no coinciden", form.password, confirm);
+    }
+  };
+  const onChangeEmail = (e) => {
+    setForm({ ...form, email: e.target.value });
+  };
+  const onChangeConfirm = (e) => {
+    setConfirm(e.target.value);
+  };
+  const onChangePassword = (e) => {
+    setForm({ ...form, password: e.target.value });
+  };
   return (
     <div>
       <div className="row">
@@ -32,7 +44,10 @@ export const SignUp = (props) => {
                             Sign up
                           </p>
 
-                          <form className="mx-1 mx-md-4">
+                          <form
+                            className="mx-1 mx-md-4"
+                            onSubmit={handleSubmit}
+                          >
                             <div className="d-flex flex-row align-items-center mb-4">
                               <i className="fas fa-envelope fa-lg me-3 fa-fw"></i>
                               <div className="form-outline flex-fill mb-0">
@@ -40,7 +55,7 @@ export const SignUp = (props) => {
                                   type="email submit"
                                   id="form3Example3c"
                                   className="form-control"
-                                  onChange={(e) => changeEmail(e.target.value)}
+                                  onChange={onChangeEmail}
                                 />
                                 <label
                                   className="form-label"
@@ -55,12 +70,10 @@ export const SignUp = (props) => {
                               <i className="fas fa-lock fa-lg me-3 fa-fw"></i>
                               <div className="form-outline flex-fill mb-0">
                                 <input
-                                  type="password submit"
+                                  type="password"
                                   id="form3Example4c"
                                   className="form-control"
-                                  onChange={(e) =>
-                                    changePassword(e.target.value)
-                                  }
+                                  onChange={(e) => onChangePassword(e)}
                                 />
                                 <label
                                   className="form-label"
@@ -75,12 +88,10 @@ export const SignUp = (props) => {
                               <i className="fas fa-key fa-lg me-3 fa-fw"></i>
                               <div className="form-outline flex-fill mb-0">
                                 <input
-                                  type="password submit"
+                                  type="password"
                                   id="form3Example4cd"
                                   className="form-control"
-                                  onChange={(e) =>
-                                    changeConfirm(e.target.value)
-                                  }
+                                  onChange={onChangeConfirm}
                                 />
                                 <label
                                   className="form-label"
@@ -90,36 +101,19 @@ export const SignUp = (props) => {
                                 </label>
                               </div>
                             </div>
-
-                            <div className="form-check d-flex justify-content-center mb-5">
-                              <input
-                                className="form-check-input me-2"
-                                type="checkbox"
-                                value=""
-                                id="form2Example3c"
-                              />
-                              <label
-                                className="form-check-label"
-                                htmlFor="form2Example3"
-                              >
-                                I agree all statements in{" "}
-                                <a href="#!">Terms of service</a>
-                              </label>
-                            </div>
-
                             <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                               <button
-                                type="button"
+                                type="submit"
                                 className="btn btn-primary btn-lg"
-                                onClick={() => {
-                                  if (passwordSent === confirmSent) {
-                                    setConfirmWrong(false);
-                                    actions.register(emailSent, passwordSent);
-                                    <Redirect to="/login"></Redirect>;
-                                  } else {
-                                    setConfirmWrong(true);
-                                  }
-                                }}
+                                // onClick={() => {
+                                //   if (passwordSent === confirmSent) {
+                                //     setConfirmWrong(false);
+                                //     actions.register(emailSent, passwordSent);
+                                //     <Redirect to="/login"></Redirect>;
+                                //   } else {
+                                //     setConfirmWrong(true);
+                                //   }
+                                // }}
                               >
                                 Register
                               </button>

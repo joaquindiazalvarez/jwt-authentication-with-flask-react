@@ -2,7 +2,9 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
+      user_email: "void",
       loged: false,
+      registered: false,
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -33,14 +35,12 @@ const getState = ({ getStore, getActions, setStore }) => {
         //reset the global store
         setStore({ demo: demo });
       },
-      register: (email, password) => {
+      register: async (form) => {
+        const store = getStore();
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({
-          email: email,
-          password: password,
-        });
+        var raw = JSON.stringify(form);
 
         var requestOptions = {
           method: "POST",
@@ -49,22 +49,16 @@ const getState = ({ getStore, getActions, setStore }) => {
           redirect: "follow",
         };
 
-        fetch(
-          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us43.gitpod.io/user/signup",
-          requestOptions
-        )
+        await fetch(process.env.BACKEND_URL + "/user/signup", requestOptions)
           .then((response) => response.text())
           .then((result) => console.log(result))
           .catch((error) => console.log("error", error));
       },
-      login: (email, password) => {
+      login: async (form) => {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({
-          email: email,
-          password: password,
-        });
+        var raw = JSON.stringify(form);
 
         var requestOptions = {
           method: "POST",
@@ -73,31 +67,37 @@ const getState = ({ getStore, getActions, setStore }) => {
           redirect: "follow",
         };
 
-        fetch(
-          "https://3001-4geeksacade-reactflaskh-aohgolkzijh.ws-us43.gitpod.io/user/login",
-          requestOptions
-        )
-          .then((response) => response.text())
-          .then((result) =>
-            console.log(window.sessionStorage.setItem(token, result.token))
-          )
+        await fetch(process.env.BACKEND_URL + "/user/login", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            sessionStorage.setItem("token", result.token);
+            setStore({ loged: true });
+            console.log(result);
+          })
           .catch((error) => console.log("error", error));
       },
-      loginShuffle: () => {
-        const store = getStore();
-        if (store.loged === true) {
-          setStore((store.loged = false));
-        } else {
-          store.loged = true;
-        }
+      getEmail: async () => {
+        const token = sessionStorage.getItem("token");
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + token);
+
+        var requestOptions = {
+          method: "GET",
+          headers: myHeaders,
+          redirect: "follow",
+        };
+
+        fetch(process.env.BACKEND_URL + "/user/get", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            setStore({ user_email: result.email });
+            console.log("successfull");
+          })
+          .catch((error) => console.log("error", error));
       },
-      loginTrue: () => {
-        const store = getStore();
-        setStore({ login: true });
-      },
-      loginFalse: () => {
-        const store = getStore();
-        setStore({ login: false });
+      logout: () => {
+        sessionStorage.removeItem("token");
+        setStore({ loged: false });
       },
     },
   };
